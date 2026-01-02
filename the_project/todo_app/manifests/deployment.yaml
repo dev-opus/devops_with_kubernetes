@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-app
+spec:
+  selector:
+    matchLabels:
+      app: todo-app
+  template:
+    metadata:
+      labels:
+        app: todo-app
+    spec:
+      containers:
+        - name: todo-app
+          image: hiatusdev/the-project
+          resources:
+            limits:
+              memory: '128Mi'
+              cpu: '500m'
+            requests:
+              cpu: '250m'
+              memory: '64Mi'
