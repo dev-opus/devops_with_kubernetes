@@ -1,4 +1,4 @@
-# Kubernetes Submissions
+# DevOps with Kubernetes Submissions
 
 ## Exercises
 
