@@ -15,3 +15,10 @@ spec:
                 name: log-output-svc
                 port:
                   number: 4444
+          - pathType: Prefix
+            path: '/pingpong'
+            backend:
+              service:
+                name: pingpong-svc
+                port:
+                  number: 6666
