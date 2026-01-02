@@ -21,3 +21,6 @@ spec:
             requests:
               cpu: '250m'
               memory: '64Mi'
+          env:
+          - name: PORT
+            value: "4000"
