@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pingpong
+spec:
+  selector:
+    matchLabels:
+      app: pingpong
+  template:
+    metadata:
+      labels:
+        app: pingpong
+    spec:
+      containers:
+        - name: pingpong
+          image: hiatusdev/pingpong
+          resources:
+            limits:
+              memory: '128Mi'
+              cpu: '500m'
+            requests:
+              memory: '64Mi'
+              cpu: '250m'
+          ports:
+            - containerPort: 3000
