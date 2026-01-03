@@ -8,4 +8,4 @@ spec:
     app: log-output
   ports:
     - port: 4444
-      targetPort: 3000
+      targetPort: 3001

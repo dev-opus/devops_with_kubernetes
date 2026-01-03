@@ -11,6 +11,10 @@ spec:
       labels:
         app: pingpong
     spec:
+      volumes:
+      - name: shared
+        persistentVolumeClaim:
+          claimName: pingpong-log-output-claim
       containers:
         - name: pingpong
           image: hiatusdev/pingpong
@@ -23,3 +27,6 @@ spec:
               cpu: '250m'
           ports:
             - containerPort: 3000
+          volumeMounts:
+          - name: shared
+            mountPath: /app/logs
