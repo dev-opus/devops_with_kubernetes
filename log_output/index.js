@@ -1,35 +1,35 @@
+import path from 'node:path';
 import { randomUUID } from 'node:crypto';
-import { createServer } from 'node:http';
+import { fileURLToPath } from 'node:url';
+import { writeFile, mkdir } from 'node:fs/promises';
 
-const server = createServer((req, res) => {
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/plain');
-  const string = generateString();
-  res.end(prefixWithDate(generateString()) + '\n');
-});
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-server.listen(3000, () => {
-  console.log('Server running on port 3000');
-});
+start();
 
-// start();
-
-// function start() {
-//   setInterval(() => {
-//     printWithDate(generateString());
-//   }, 5000);
-// }
+function start() {
+  const datePrefixedString = prefixWithDate(generateString());
+  setInterval(async () => {
+    await writeStringToFile(datePrefixedString);
+  }, 5000);
+}
 
 function generateString() {
   return randomUUID();
 }
 
-// function printWithDate(string) {
-//   const isoDateString = new Date().toISOString();
-//   console.log(`${isoDateString}: ${string}`);
-// }
-
 function prefixWithDate(string) {
   const isoDateString = new Date().toISOString();
   return `${isoDateString}: ${string}`;
+}
+
+async function writeStringToFile(string) {
+  const logsDir = path.join(__dirname, 'logs');
+  await mkdir(logsDir, { recursive: true });
+  const filePath = path.join(logsDir, 'log.txt');
+
+  await writeFile(path.join(filePath), string + '\n', {
+    flag: 'a',
+  });
 }

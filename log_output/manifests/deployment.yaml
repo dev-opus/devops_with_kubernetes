@@ -11,9 +11,12 @@ spec:
       labels:
         app: log-output
     spec:
+      volumes:
+        - name: log-file
+          emptyDir: {}
       containers:
-        - name: log-output
-          image: hiatusdev/log_output
+        - name: log-output-logger
+          image: hiatusdev/log_output_logger
           resources:
             limits:
               cpu: "250m"
@@ -21,3 +24,22 @@ spec:
             requests:
               cpu: "125m"
               memory: "128Mi"
+          volumeMounts:
+          - name: log-file
+            mountPath: /app/logs
+        - name: log-output-server
+          image: hiatusdev/log_output_server
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
+            requests:
+              cpu: "125m"
+              memory: "128Mi"
+          volumeMounts:
+          - name: log-file
+            mountPath: /app/logs
+          ports:
+          - containerPort: 3000
+
+
