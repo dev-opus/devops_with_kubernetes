@@ -19,5 +19,5 @@
 - [1.6](https://github.com/dev-opus/devops_with_kubernetes/tree/1.6)  
 - [1.7](https://github.com/dev-opus/devops_with_kubernetes/tree/1.7)  
 - [1.8](https://github.com/dev-opus/devops_with_kubernetes/tree/1.8)  
--  [1.9](https://github.com/dev-opus/devops_with_kubernetes/tree/1.9)
-  
+- [1.9](https://github.com/dev-opus/devops_with_kubernetes/tree/1.9)
+- [1.10](https://github.com/dev-opus/devops_with_kubernetes/tree/1.10)
