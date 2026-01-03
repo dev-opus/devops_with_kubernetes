@@ -9,7 +9,7 @@ spec:
     - http:
         paths:
           - pathType: Prefix
-            path: '/logs'
+            path: '/'
             backend:
               service:
                 name: log-output-svc
