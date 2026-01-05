@@ -29,7 +29,54 @@ const Layout: FC = (props) => {
   );
 };
 
-const Top: FC<{ image: string }> = (props: { image: string }) => {
+const TodoSection: FC<{ todos: string[] }> = (props: { todos: string[] }) => {
+  return (
+    <>
+      <div style={{ marginTop: '10px' }}>
+        <input
+          type="text"
+          name="todo"
+          id="todo"
+          minlength={2}
+          maxlength={140}
+          style={{
+            display: 'inline-block',
+            padding: '2px',
+            lineHeight: '1.2rem',
+          }}
+        />
+        <button
+          type="submit"
+          style={{
+            display: 'inline-block',
+            padding: '4px',
+            marginLeft: '10px',
+            cursor: 'pointer',
+          }}
+        >
+          Create todo
+        </button>
+      </div>
+
+      <div>
+        <ul>
+          {props.todos.map((todo, index) => {
+            return (
+              <b>
+                <li key={index}>{todo}</li>
+              </b>
+            );
+          })}
+        </ul>
+      </div>
+    </>
+  );
+};
+
+const Top: FC<{ image: string; todos: string[] }> = (props: {
+  image: string;
+  todos: string[];
+}) => {
   return (
     <Layout>
       <h1>The Project App</h1>
@@ -38,6 +85,7 @@ const Top: FC<{ image: string }> = (props: { image: string }) => {
         alt="Dynamic content"
         style={{ maxWidth: '20%' }}
       />
+      <TodoSection todos={props.todos} />
       <h2>DevOps with Kubernetes 2026</h2>
     </Layout>
   );
@@ -69,7 +117,16 @@ app.get('/', async (c) => {
     }
 
     const image = await getImageFromDisk(imagePath);
-    return c.html(<Top image={image} />);
+    return c.html(
+      <Top
+        image={image}
+        todos={[
+          'Learn Golang',
+          'Master production grade k8s',
+          'Build projects',
+        ]}
+      />
+    );
   } catch (error: any) {
     const errMsg = error.stack ?? error.message;
     return c.html(<ErrorPage errMsg={errMsg}></ErrorPage>);
