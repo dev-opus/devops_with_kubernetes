@@ -10,3 +10,19 @@ spec:
   accessModes:
     - ReadWriteOnce
   storageClassName: pingpong-log-output
+
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: project-assets-claim
+spec:
+  resources:
+    requests:
+      storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: project-assets
