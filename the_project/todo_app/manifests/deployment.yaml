@@ -11,6 +11,10 @@ spec:
       labels:
         app: todo-app
     spec:
+      volumes:
+      - name: assets
+        persistentVolumeClaim: 
+          claimName: project-assets-claim
       containers:
         - name: todo-app
           image: hiatusdev/the-project
@@ -24,3 +28,6 @@ spec:
           env:
           - name: PORT
             value: "4000"
+          volumeMounts:
+          - name: assets
+            mountPath: /app/dist/assets
