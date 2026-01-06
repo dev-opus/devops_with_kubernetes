@@ -24,3 +24,8 @@
 - [1.11](https://github.com/dev-opus/devops_with_kubernetes/tree/1.11)
 - [1.12](https://github.com/dev-opus/devops_with_kubernetes/tree/1.12)
 - [1.13](https://github.com/dev-opus/devops_with_kubernetes/tree/1.13)
+
+### Chapter 3: More Building Blocks
+
+1. Networking Between Pods
+- [2.1](https://github.com/dev-opus/devops_with_kubernetes/tree/2.1)
