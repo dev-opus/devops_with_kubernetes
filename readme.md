@@ -29,3 +29,4 @@
 
 1. Networking Between Pods
 - [2.1](https://github.com/dev-opus/devops_with_kubernetes/tree/2.1)
+- [2.2](https://github.com/dev-opus/devops_with_kubernetes/tree/2.2)
