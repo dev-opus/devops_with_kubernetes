@@ -1,9 +1,10 @@
 import { Hono } from 'hono';
 import path from 'node:path';
-import type { FC } from 'hono/jsx';
+import { todos } from './server.js';
+import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { writeFile, mkdir, readFile } from 'node:fs/promises';
-import { existsSync } from 'node:fs';
+import { ErrorPage, ErrorPageTitleRequired, Main } from './components/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,116 +22,21 @@ setInterval(async () => {
 
 const app = new Hono();
 
-const Layout: FC = (props) => {
-  return (
-    <html>
-      <body>{props.children}</body>
-    </html>
-  );
-};
-
-const TodoSection: FC<{ todos: string[] }> = (props: { todos: string[] }) => {
-  return (
-    <>
-      <div style={{ marginTop: '10px' }}>
-        <input
-          type="text"
-          name="todo"
-          id="todo"
-          minlength={2}
-          maxlength={140}
-          style={{
-            display: 'inline-block',
-            padding: '2px',
-            lineHeight: '1.2rem',
-          }}
-        />
-        <button
-          type="submit"
-          style={{
-            display: 'inline-block',
-            padding: '4px',
-            marginLeft: '10px',
-            cursor: 'pointer',
-          }}
-        >
-          Create todo
-        </button>
-      </div>
-
-      <div>
-        <ul>
-          {props.todos.map((todo, index) => {
-            return (
-              <b>
-                <li key={index}>{todo}</li>
-              </b>
-            );
-          })}
-        </ul>
-      </div>
-    </>
-  );
-};
-
-const Top: FC<{ image: string; todos: string[] }> = (props: {
-  image: string;
-  todos: string[];
-}) => {
-  return (
-    <Layout>
-      <h1>The Project App</h1>
-      <img
-        src={props.image}
-        alt="Dynamic content"
-        style={{ maxWidth: '20%' }}
-      />
-      <TodoSection todos={props.todos} />
-      <h2>DevOps with Kubernetes 2026</h2>
-    </Layout>
-  );
-};
-
-const ErrorPage: FC<{ errMsg: string }> = (props: { errMsg: string }) => {
-  const { errMsg } = props;
-  return (
-    <Layout>
-      <h1>An error has occurred</h1>
-      <code
-        style={{
-          display: 'block',
-          width: '50%',
-          wordBreak: 'break-all',
-          whiteSpace: 'pre-wrap',
-        }}
-      >
-        {errMsg}
-      </code>
-    </Layout>
-  );
-};
-
 app.get('/', async (c) => {
   try {
     if (!existsSync(imagePath)) {
       await saveImageToDisk(imagePath);
     }
-
     const image = await getImageFromDisk(imagePath);
-    return c.html(
-      <Top
-        image={image}
-        todos={[
-          'Learn Golang',
-          'Master production grade k8s',
-          'Build projects',
-        ]}
-      />
-    );
+    return c.html(<Main image={image} todos={todos} />);
   } catch (error: any) {
     const errMsg = error.stack ?? error.message;
     return c.html(<ErrorPage errMsg={errMsg}></ErrorPage>);
   }
+});
+
+app.get('title-error', (c) => {
+  return c.html(<ErrorPageTitleRequired></ErrorPageTitleRequired>);
 });
 
 export default app;
