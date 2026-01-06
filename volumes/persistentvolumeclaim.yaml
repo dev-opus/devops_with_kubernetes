@@ -19,6 +19,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: project-assets-claim
+  namespace: project
 spec:
   resources:
     requests:

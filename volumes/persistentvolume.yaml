@@ -27,6 +27,7 @@ apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: project-assets
+  namespace: project
 spec:
   capacity:
     storage: 1Gi
