@@ -21,4 +21,4 @@ spec:
               service:
                 name: pingpong-svc
                 port:
-                  number: 6666
+                  number: 2345
