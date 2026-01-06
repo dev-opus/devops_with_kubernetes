@@ -2,6 +2,7 @@ apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: pingpong-log-output
+  namespace: exercises
 spec:
   capacity:
     storage: 1Gi
