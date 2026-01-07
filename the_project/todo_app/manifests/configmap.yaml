@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: project-cm
+  namespace: project
+data:
+  PORT: '4000'
+  IMAGE_THRESHHOLD_IN_MS: '600000'
+  IMAGE_DOWNLOAD_URL: 'https://picsum.photos/1200'

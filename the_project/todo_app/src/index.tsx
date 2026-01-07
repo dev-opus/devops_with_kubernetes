@@ -1,3 +1,4 @@
+import dotenv from 'dotenv';
 import { Hono } from 'hono';
 import path from 'node:path';
 import { todos } from './server.js';
@@ -6,6 +7,8 @@ import { fileURLToPath } from 'node:url';
 import { writeFile, mkdir, readFile } from 'node:fs/promises';
 import { ErrorPage, ErrorPageTitleRequired, Main } from './components/index.js';
 
+dotenv.config();
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -13,12 +16,16 @@ const assetDir = path.join(__dirname, 'assets');
 await mkdir(assetDir, { recursive: true });
 const imagePath = path.join(assetDir, 'random-image.jpg');
 
-const IMAGE_THRESHHOLD_IN_MS = 10 * 60 * 1000; // 10 minutes
+const IMAGE_THRESHHOLD_IN_MS = process.env.IMAGE_THRESHHOLD_IN_MS; // 10 minutes
+if (!IMAGE_THRESHHOLD_IN_MS) {
+  throw new Error('IMAGE_THRESHHOLD_IN_MS is not set');
+}
+
 setInterval(async () => {
   await refreshImage(imagePath).catch((error) => {
     console.error('an error occured in reloading image', error.stack);
   });
-}, IMAGE_THRESHHOLD_IN_MS);
+}, +IMAGE_THRESHHOLD_IN_MS);
 
 const app = new Hono();
 
@@ -44,7 +51,11 @@ export default app;
 // Helpers
 
 async function saveImageToDisk(filePath: string) {
-  const res = await fetch('https://picsum.photos/1200');
+  const IMAGE_DOWNLOAD_URL = process.env.IMAGE_DOWNLOAD_URL;
+  if (!IMAGE_DOWNLOAD_URL) {
+    throw new Error('IMAGE_DOWNLOAD_URL is not set');
+  }
+  const res = await fetch(IMAGE_DOWNLOAD_URL);
   const arrayBuffer = await res.arrayBuffer();
   const imageBuffer = Buffer.from(arrayBuffer);
   await writeFile(filePath, imageBuffer);
