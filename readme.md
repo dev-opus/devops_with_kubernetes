@@ -34,3 +34,4 @@
 2. Organising a Cluster
 - [2.3](https://github.com/dev-opus/devops_with_kubernetes/tree/2.3)
 - [2.4](https://github.com/dev-opus/devops_with_kubernetes/tree/2.4)
+- [2.5](https://github.com/dev-opus/devops_with_kubernetes/tree/2.5)
