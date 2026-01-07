@@ -13,9 +13,12 @@ spec:
         app: log-output
     spec:
       volumes:
-        - name: logs
-          persistentVolumeClaim:
-            claimName: pingpong-log-output-claim
+      - name: info
+        configMap:
+          name: log-output-cm
+      - name: logs
+        persistentVolumeClaim:
+          claimName: pingpong-log-output-claim
       containers:
         - name: log-output-logger
           image: hiatusdev/log_output_logger
@@ -34,6 +37,11 @@ spec:
           env:
           - name: PINGPONG_SVC
             value: "http://pingpong-svc:2345"
+          - name: MESSAGE
+            valueFrom:
+              configMapKeyRef:
+                key: MESSAGE
+                name: log-output-cm
           resources:
             limits:
               cpu: "250m"
@@ -44,6 +52,8 @@ spec:
           volumeMounts:
           - name: logs
             mountPath: /app/logs
+          - name: info
+            mountPath: /app/info
           ports:
           - containerPort: 3001
 

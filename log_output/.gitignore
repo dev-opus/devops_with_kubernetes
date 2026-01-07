@@ -1,3 +1,4 @@
-logs
+logs/
+info/
 .env
 node_modules

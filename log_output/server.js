@@ -11,13 +11,22 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const pingpongSvc = process.env.PINGPONG_SVC;
+const message = process.env.MESSAGE;
 
 const server = createServer(async (req, res) => {
-  const content = await getContentFromFile();
+  const info = await getInfoFromFile();
   const pongs = await getPongsViaNetwork();
+  const contents = (await getContentFromFile()).split('\n');
+  const content = contents[contents.length - 2];
+
+  const page = `file content: ${info}
+env variable: MESSAGE=${message}
+${content}
+Ping / Pongs: ${pongs}
+  `;
   res.statusCode = 200;
   res.setHeader('Content-Type', 'text/plain');
-  res.end(content + `Ping / Pong: ${pongs}`);
+  res.end(page);
 });
 
 server.listen(3001, () => {
@@ -25,8 +34,26 @@ server.listen(3001, () => {
 });
 
 async function getContentFromFile() {
+  console.log('getting hash from file...');
   const logsDir = path.join(__dirname, 'logs');
   const filePath = path.join(logsDir, 'log.txt');
+  await mkdir(logsDir, { recursive: true });
+
+  if (!existsSync(filePath)) {
+    return '';
+  }
+
+  const content = await readFile(filePath, {
+    encoding: 'utf8',
+  });
+
+  return content;
+}
+
+async function getInfoFromFile() {
+  console.log('getting info from file...');
+  const logsDir = path.join(__dirname, 'info');
+  const filePath = path.join(logsDir, 'information.txt');
   await mkdir(logsDir, { recursive: true });
 
   if (!existsSync(filePath)) {
@@ -54,7 +81,7 @@ async function getPongsFromFile() {
 }
 
 async function getPongsViaNetwork() {
-  console.log({ pingpongSvc });
+  console.log('getting pongs via the network...');
   try {
     const res = await fetch(`${pingpongSvc}/get-pingpong`);
     const pongs = await res.text();

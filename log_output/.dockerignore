@@ -1,4 +1,5 @@
 manifests/
 node_modules/
 logs/
+info/
 Dockerfile
