@@ -100,9 +100,9 @@ async function createTable() {
       );
     `);
 
-    // await client.query(`
-    //   ALTER TABLE pongs ADD CONSTRAINT pongs_single_row CHECK (id = 1);
-    // `);
+    await client.query(`
+      ALTER TABLE pongs ADD CONSTRAINT pongs_single_row CHECK (id = 1);
+    `);
 
     console.log('Tables created successfully.');
   } catch (error) {
