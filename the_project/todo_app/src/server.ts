@@ -1,29 +1,17 @@
 import dotenv from 'dotenv';
 import app from './index.js';
 import { serve } from '@hono/node-server';
-import type { Todo } from './utils/types.js';
+import {
+  type Todo,
+  config,
+  ensureConfigDefined,
+  TodoClient,
+} from './utils/index.js';
 
 dotenv.config();
+ensureConfigDefined(config);
 
-const port = process.env.PORT ?? 3000;
-export const todos: Todo[] = [
-  {
-    id: 1,
-    title: 'Learn Golang',
-  },
-  {
-    id: 2,
-    title: 'Master production grade k8s',
-  },
-  {
-    id: 3,
-    title: 'Build projects',
-  },
-  {
-    id: 4,
-    title: 'Get a job!!',
-  },
-];
+const todoClient = new TodoClient();
 
 app.post('/todos', async (c) => {
   const formData = await c.req.formData();
@@ -33,19 +21,19 @@ app.post('/todos', async (c) => {
     return c.redirect('/title-error', 301);
   }
 
-  const todo: Todo = {
-    id: todos.length + 1,
-    title: title as string,
-  };
-
-  todos.push(todo);
+  await todoClient.createTodo(title as string);
   return c.redirect('/', 301);
+});
+
+app.get('/todos', async (c) => {
+  const todos = await todoClient.getTodos();
+  return c.json(todos);
 });
 
 serve(
   {
     fetch: app.fetch,
-    port: port as number,
+    port: +config.port!,
   },
   (info) => {
     console.log(`Server running at http://${info.address}:${info.port}`);

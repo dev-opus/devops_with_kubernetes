@@ -1,11 +1,12 @@
 import dotenv from 'dotenv';
 import { Hono } from 'hono';
 import path from 'node:path';
-import { todos } from './server.js';
 import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { writeFile, mkdir, readFile } from 'node:fs/promises';
 import { ErrorPage, ErrorPageTitleRequired, Main } from './components/index.js';
+import { config } from './utils/config.js';
+import type { Todo } from './utils/types.js';
 
 dotenv.config();
 
@@ -34,7 +35,10 @@ app.get('/', async (c) => {
     if (!existsSync(imagePath)) {
       await saveImageToDisk(imagePath);
     }
+
+    const todos = await getTodosOverNetwork();
     const image = await getImageFromDisk(imagePath);
+
     return c.html(<Main image={image} todos={todos} />);
   } catch (error: any) {
     const errMsg = error.stack ?? error.message;
@@ -71,4 +75,13 @@ async function getImageFromDisk(filePath: string) {
 async function refreshImage(filePath: string) {
   console.log('Threshold met, saving new image...');
   await saveImageToDisk(filePath);
+}
+
+async function getTodosOverNetwork() {
+  const res = await fetch(`http://localhost:${config.port!}/todos`);
+  if (!res.ok) {
+    throw new Error('Failed to fetch todos');
+  }
+  const todos: Todo[] = await res.json();
+  return todos;
 }

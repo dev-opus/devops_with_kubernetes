@@ -9,4 +9,4 @@ WORKDIR /app
 COPY package*.json .
 COPY --from=builder /app/dist /app/dist
 RUN npm ci --omit=dev
-CMD [ "npm", "start" ]
+CMD [ "sh", "-c", "npm run db:setup && npm start" ]

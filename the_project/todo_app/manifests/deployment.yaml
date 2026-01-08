@@ -18,7 +18,7 @@ spec:
           claimName: project-assets-claim
       containers:
         - name: todo-app
-          image: hiatusdev/the-project
+          image: hiatusdev/todoapp
           resources:
             limits:
               memory: '128Mi'
@@ -29,6 +29,8 @@ spec:
           envFrom:
           - configMapRef:
               name: project-cm
+          - secretRef:
+              name: todoapp-secret
           volumeMounts:
           - name: assets
             mountPath: /app/dist/assets
