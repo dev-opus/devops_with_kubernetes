@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: todo-cron
+spec:
+  schedule: '0 * * * *'
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: todo-cron
+              image: hiatusdev/todo-cron:latest
+              envFrom:
+                - secretRef:
+                    name: todoapp-secret
+                - configMapRef:
+                    name: project-cm
+              env:
+                - name: WIKIPEDIA_URL
+                  value: 'https://en.wikipedia.org/wiki/Special:Random'
+
+          restartPolicy: OnFailure

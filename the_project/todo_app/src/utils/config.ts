@@ -5,6 +5,8 @@ let configMessagePrinted = false;
 
 export const config = {
   port: process.env.PORT,
+  wikipediaUrl:
+    process.env.WIKIPEDIA_URL || 'https://en.wikipedia.org/wiki/Special:Random',
   db: {
     host: process.env.DB_HOST,
     user: process.env.DB_USER,

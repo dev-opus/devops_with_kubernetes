@@ -4,6 +4,9 @@ COPY . .
 RUN npm ci
 RUN npm run build
 
+FROM builder AS cron
+CMD [ "sh", "-c", "npm run generate:todo" ]
+
 FROM node:lts-alpine3.23 AS runner
 WORKDIR /app
 COPY package*.json .
