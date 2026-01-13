@@ -40,3 +40,4 @@
 3. Statefulsets and Jobs
 - [2.7](https://github.com/dev-opus/devops_with_kubernetes/tree/2.7)
 - [2.8](https://github.com/dev-opus/devops_with_kubernetes/tree/2.8)
+- [2.9](https://github.com/dev-opus/devops_with_kubernetes/tree/2.9)
