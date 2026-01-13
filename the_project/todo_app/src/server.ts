@@ -14,6 +14,7 @@ ensureConfigDefined(config);
 const todoClient = new TodoClient();
 
 app.post('/todos', async (c) => {
+  console.log('Received request to create a new todo');
   const formData = await c.req.formData();
   const title = formData.get('todo');
 
@@ -26,6 +27,7 @@ app.post('/todos', async (c) => {
 });
 
 app.get('/todos', async (c) => {
+  console.log('Received request to fetch todos');
   const todos = await todoClient.getTodos();
   return c.json(todos);
 });

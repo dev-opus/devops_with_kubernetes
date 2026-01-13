@@ -1,0 +1,203 @@
+# alloy:
+#   configMap:
+#     create: true
+#     content: |
+#       discovery.kubernetes "pods" {
+#         role = "pod"
+#         selectors {
+#           role = "pod"
+#           field = "spec.nodeName=" + coalesce(sys.env("HOSTNAME"), constants.hostname)
+#         }
+#       }
+
+#       discovery.relabel "pod_logs" {
+#         targets = discovery.kubernetes.pods.targets
+#         rule {
+#           source_labels = ["__meta_kubernetes_namespace"]
+#           target_label  = "namespace"
+#         }
+#         rule {
+#           source_labels = ["__meta_kubernetes_pod_name"]
+#           target_label  = "pod"
+#         }
+#         rule {
+#           source_labels = ["__meta_kubernetes_pod_container_name"]
+#           target_label  = "container"
+#         }
+#       }
+
+#       loki.source.kubernetes "pod_logs" {
+#         targets    = discovery.relabel.pod_logs.output
+#         forward_to = [loki.write.local_loki.receiver]
+
+#         labels = {
+#           namespace = "{{ .namespace }}",
+#           pod       = "{{ .pod }}",
+#           container = "{{ .container }}",
+#           app       = "{{ .__meta_kubernetes_pod_label_app }}",
+#         }
+#       }
+
+#       loki.write "local_loki" {
+#         endpoint {
+#           url = "http://loki.svc.cluster.local:3100/loki/api/v1/push"
+#         }
+#       }
+
+# controller:
+#   type: daemonset
+#   volumes:
+#     extraVolumes:
+#       - name: varlog
+#         hostPath:
+#           path: /var/log
+#       - name: varlibdockercontainers
+#         hostPath:
+#           path: /var/lib/docker/containers
+
+# alloy:
+#   configMap:
+#     create: true
+#     content: |
+#       discovery.kubernetes "pods" {
+#         role = "pod"
+#         selectors {
+#           role  = "pod"
+#           field = "spec.nodeName=" + coalesce(sys.env("HOSTNAME"), constants.hostname)
+#         }
+#       }
+
+#       discovery.relabel "pod_logs" {
+#         targets = discovery.kubernetes.pods.targets
+
+#         rule {
+#           source_labels = ["__meta_kubernetes_namespace"]
+#           target_label  = "namespace"
+#         }
+
+#         rule {
+#           source_labels = ["__meta_kubernetes_pod_name"]
+#           target_label  = "pod"
+#         }
+
+#         rule {
+#           source_labels = ["__meta_kubernetes_pod_container_name"]
+#           target_label  = "container"
+#         }
+
+#         rule {
+#           source_labels = ["__meta_kubernetes_pod_label_app"]
+#           target_label  = "app"
+#         }
+#       }
+
+#       loki.source.kubernetes "pod_logs" {
+#         targets    = discovery.relabel.pod_logs.output
+#         forward_to = [loki.relabel.pod_logs.receiver]
+#       }
+
+#       loki.relabel "pod_logs" {
+#         forward_to = [loki.write.local_loki.receiver]
+
+#         rule {
+#           source_labels = ["namespace"]
+#           target_label  = "namespace"
+#         }
+
+#         rule {
+#           source_labels = ["pod"]
+#           target_label  = "pod"
+#         }
+
+#         rule {
+#           source_labels = ["container"]
+#           target_label  = "container"
+#         }
+
+#         rule {
+#           source_labels = ["app"]
+#           target_label  = "app"
+#         }
+#       }
+
+#       loki.write "local_loki" {
+#         endpoint {
+#           url = "http://loki.svc.cluster.local:3100/loki/api/v1/push"
+#         }
+#       }
+alloy:
+  configMap:
+    create: true
+    content: |
+      discovery.kubernetes "pods" {
+        role = "pod"
+
+        selectors {
+          role  = "pod"
+          field = "spec.nodeName=" + coalesce(sys.env("HOSTNAME"), constants.hostname)
+        }
+      }
+
+      discovery.relabel "pod_logs" {
+        targets = discovery.kubernetes.pods.targets
+
+        rule {
+          source_labels = ["__meta_kubernetes_namespace"]
+          target_label  = "namespace"
+        }
+
+        rule {
+          source_labels = ["__meta_kubernetes_pod_name"]
+          target_label  = "pod"
+        }
+
+        rule {
+          source_labels = ["__meta_kubernetes_pod_container_name"]
+          target_label  = "container"
+        }
+
+        rule {
+          source_labels = ["__meta_kubernetes_pod_label_app"]
+          target_label  = "app"
+        }
+      }
+
+      loki.source.kubernetes "pod_logs" {
+        targets    = discovery.relabel.pod_logs.output
+        forward_to = [loki.write.local_loki.receiver]
+      }
+
+      loki.write "local_loki" {
+        endpoint {
+          url = "http://loki.svc.cluster.local:3100/loki/api/v1/push"
+        }
+      }
+
+controller:
+  type: daemonset
+  volumes:
+    extraVolumes:
+      - name: varlogpods
+        hostPath:
+          path: /var/log/pods
+      - name: varlogcontainers
+        hostPath:
+          path: /var/log/containers
+
+extraVolumeMounts:
+  - name: varlogpods
+    mountPath: /var/log/pods
+    readOnly: true
+  - name: varlogcontainers
+    mountPath: /var/log/containers
+    readOnly: true
+# controller:
+#   type: daemonset
+#   volumes:
+#     extraVolumes:
+#       - name: varlog
+#         hostPath:
+#           path: /var/log
+#       - name: varlibdockercontainers
+#         hostPath:
+#           path: /var/lib/docker/containe

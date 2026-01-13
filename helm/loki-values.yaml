@@ -1,0 +1,41 @@
+deploymentMode: SingleBinary
+
+loki:
+  auth_enabled: false
+  commonConfig:
+    replication_factor: 1
+    # path_prefix is crucial for k3d local path provisioner
+    path_prefix: /var/loki
+
+  schemaConfig:
+    configs:
+      - from: 2024-01-01
+        store: tsdb # Modern index type
+        object_store: filesystem
+        schema: v13
+        index:
+          prefix: index_
+          period: 24h
+
+  storage:
+    type: filesystem
+
+# 1. Prevent the "Multiple Replicas" error
+read:
+  replicas: 0
+write:
+  replicas: 0
+backend:
+  replicas: 0
+
+# 2. Configure the actual running instance
+singleBinary:
+  replicas: 1
+  persistence:
+    enabled: true
+    size: 2Gi
+    # k3d uses 'local-path' as the default StorageClass
+    storageClass: local-path
+  # This helps avoid the "read-only filesystem" error on k3d
+  extraArgs:
+    - '-config.expand-env=true'
